@@ -1,4 +1,9 @@
 package ir.mobin.studentspringboot.dto.professor;
 
-public class ViewProfessorDto {
+import ir.mobin.studentspringboot.dto.user.ViewUserDto;
+import ir.mobin.studentspringboot.enums.AcademicRank;
+
+public class ViewProfessorDto extends ViewUserDto {
+
+    private AcademicRank academicRank;
 }
