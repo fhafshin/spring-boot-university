@@ -17,6 +17,7 @@ public interface StudentService {
     ViewStudentDto findById(Long id);
 
     ViewStudentDto update(UpdateStudentDto student);
+    Student update(Student student);
 
     void delete(Long id) ;
 

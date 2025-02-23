@@ -3,13 +3,13 @@ package ir.mobin.studentspringboot.service;
 import ir.mobin.studentspringboot.dto.course.AddCourseDto;
 import ir.mobin.studentspringboot.dto.course.UpdateCourseDto;
 import ir.mobin.studentspringboot.dto.course.ViewCourseDto;
-import ir.mobin.studentspringboot.dto.student.UpdateStudentDto;
 import ir.mobin.studentspringboot.entity.Course;
 import ir.mobin.studentspringboot.entity.Student;
 import ir.mobin.studentspringboot.exception.ConflictException;
 import ir.mobin.studentspringboot.exception.NotFoundException;
 import ir.mobin.studentspringboot.mapper.CourseMapper;
 import ir.mobin.studentspringboot.repository.CourseRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
@@ -59,24 +59,31 @@ public class CourseServiceImpl implements CourseService {
     }
 
 
-
+    @Transactional
     public void addStudent(int codeCourse, Long stdNumber) {
 
 
-           Student student=studentService.findByStdNumber(stdNumber);
-          Course course=findByCode(codeCourse);
+        Student student = studentService.findByStdNumber(stdNumber);
+        Course course = findByCode(codeCourse);
 
-           course.getStudents().add(student);
-           student.getCourses().add(course);
-           studentService.update(studentService.toUpdateStudentDto(student));
-            update(toUpdateCourseDto(course));
+        course.getStudents().add(student);
+        student.getCourses().add(course);
+        studentService.update(student);
+        update(course);
     }
 
     public ViewCourseDto update(UpdateCourseDto course) {
 
         findById(course.getId());
 
-        return courseMapper.toViewDto(courseRepository.save(courseMapper.toEntity(course)));
+        return courseMapper.toViewDto(update(courseMapper.toEntity(course)));
+
+    }
+
+    public Course update(Course course) {
+
+
+        return courseRepository.save(course);
 
     }
 

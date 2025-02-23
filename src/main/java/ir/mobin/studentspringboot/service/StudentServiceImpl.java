@@ -9,7 +9,6 @@ import ir.mobin.studentspringboot.exception.NotFoundException;
 import ir.mobin.studentspringboot.mapper.StudentMapper;
 import ir.mobin.studentspringboot.repository.StudentRepository;
 import ir.mobin.studentspringboot.repository.UserRepository;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +32,7 @@ public class StudentServiceImpl extends UserService<Student> implements StudentS
     }
 
     public UpdateStudentDto toUpdateStudentDto(Student student) {
-        return  studentMapper.toUpdateStudent(student);
+        return studentMapper.toUpdateStudent(student);
     }
 
     private Optional<Student> checkUniqueStdNumber(Long code) {
@@ -56,7 +55,11 @@ public class StudentServiceImpl extends UserService<Student> implements StudentS
 
         return byStdNumber;
     }
+    @Override
+    public Student update(Student student) {
 
+        return studentRepository.save(student);
+    }
 
     @Override
     public ViewStudentDto update(UpdateStudentDto student) {
@@ -66,8 +69,14 @@ public class StudentServiceImpl extends UserService<Student> implements StudentS
 
         checkUniqueNationalCodeForUpdate(student.getNationalCode(), id);
 
+
         Student studentEntity = studentMapper.toEntity(student);
-        return studentMapper.toViewDto(studentRepository.save(studentEntity));
+        Student select = studentRepository.findById(student.getId()).get();
+
+        studentEntity.setPassword(select.getPassword());
+        studentEntity.setUsername(select.getUsername());
+        studentEntity.setStdNumber(select.getStdNumber());
+        return studentMapper.toViewDto(update(studentEntity));
     }
 
     @Override
@@ -83,7 +92,7 @@ public class StudentServiceImpl extends UserService<Student> implements StudentS
     @Override
     public Student findByStdNumber(Long stdNumber) {
         return studentRepository.findByStdNumber(stdNumber)
-                .orElseThrow(()->new NotFoundException("student not found"));
+                .orElseThrow(() -> new NotFoundException("student not found"));
     }
 
     @Override

@@ -3,6 +3,7 @@ package ir.mobin.studentspringboot.controller;
 import ir.mobin.studentspringboot.dto.course.AddCourseDto;
 import ir.mobin.studentspringboot.dto.course.UpdateCourseDto;
 import ir.mobin.studentspringboot.dto.course.ViewCourseDto;
+import ir.mobin.studentspringboot.dto.student.AddStudentDto;
 import ir.mobin.studentspringboot.entity.Course;
 import ir.mobin.studentspringboot.entity.Professor;
 import ir.mobin.studentspringboot.service.CourseService;
@@ -44,5 +45,11 @@ public class CourseController {
     @PutMapping("/update")
     public ResponseEntity<ViewCourseDto> update(@RequestBody UpdateCourseDto course) {
         return ResponseEntity.ok(courseService.update(course));
+    }
+
+    @GetMapping("/add-student/{courseCode}/{stdNumber}")
+    public ResponseEntity<?> addStudent(@PathVariable int courseCode, @PathVariable Long stdNumber) {
+        courseService.addStudent(courseCode,stdNumber);
+        return ResponseEntity.ok("added student");
     }
 }

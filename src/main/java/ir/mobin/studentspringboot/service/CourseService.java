@@ -24,4 +24,6 @@ public interface CourseService {
      void delete(Long id) ;
 
      List<ViewCourseDto> findAll();
+
+    void addStudent(int codeCourse, Long stdNumber);
 }
