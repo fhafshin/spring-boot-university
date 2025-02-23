@@ -1,5 +1,8 @@
 package ir.mobin.studentspringboot.controller;
 
+import ir.mobin.studentspringboot.dto.student.AddStudentDto;
+import ir.mobin.studentspringboot.dto.student.UpdateStudentDto;
+import ir.mobin.studentspringboot.dto.student.ViewStudentDto;
 import ir.mobin.studentspringboot.entity.Course;
 import ir.mobin.studentspringboot.entity.Student;
 import ir.mobin.studentspringboot.service.CourseService;
@@ -17,17 +20,17 @@ public class StudentController {
     private final StudentService studentService;
 
     @PostMapping("/create")
-    public ResponseEntity<Student> save(@RequestBody Student student) {
+    public ResponseEntity<ViewStudentDto> save(@RequestBody AddStudentDto student) {
         return ResponseEntity.ok(studentService.save(student));
     }
 
     @GetMapping("/find-all")
-    public List<Student> findAll() {
+    public List<ViewStudentDto> findAll() {
         return studentService.findAll();
     }
 
     @GetMapping("/find-one/{id}")
-    public ResponseEntity<Student> findOne(@PathVariable Long id) {
+    public ResponseEntity<ViewStudentDto> findOne(@PathVariable Long id) {
 
         return ResponseEntity.ok(studentService.findById(id));
     }
@@ -39,7 +42,7 @@ public class StudentController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Student> update(@RequestBody Student student) {
+    public ResponseEntity<ViewStudentDto> update(@RequestBody UpdateStudentDto student) {
         return ResponseEntity.ok(studentService.update(student));
     }
 }

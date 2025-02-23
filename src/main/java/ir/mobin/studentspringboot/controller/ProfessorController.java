@@ -1,6 +1,9 @@
 package ir.mobin.studentspringboot.controller;
 
 
+import ir.mobin.studentspringboot.dto.professor.AddProfessorDto;
+import ir.mobin.studentspringboot.dto.professor.UpdateProfessorDto;
+import ir.mobin.studentspringboot.dto.professor.ViewProfessorDto;
 import ir.mobin.studentspringboot.entity.Professor;
 import ir.mobin.studentspringboot.service.ProfessorService;
 import lombok.AllArgsConstructor;
@@ -17,17 +20,17 @@ public class ProfessorController {
     private final ProfessorService professorService;
 
     @PostMapping("/create")
-    public ResponseEntity<Professor> save(@RequestBody Professor professor) {
+    public ResponseEntity<ViewProfessorDto> save(@RequestBody AddProfessorDto professor) {
         return ResponseEntity.ok(professorService.save(professor));
     }
 
     @GetMapping("/find-all")
-    public List<Professor> findAll() {
+    public List<ViewProfessorDto> findAll() {
         return professorService.findAll();
     }
 
     @GetMapping("/find-one/{id}")
-    public ResponseEntity<Professor> findOne(@PathVariable Long id) {
+    public ResponseEntity<ViewProfessorDto> findOne(@PathVariable Long id) {
 
         return ResponseEntity.ok(professorService.findById(id));
     }
@@ -39,7 +42,7 @@ public class ProfessorController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Professor> update(@RequestBody Professor professor) {
+    public ResponseEntity<ViewProfessorDto> update(@RequestBody UpdateProfessorDto professor) {
         return ResponseEntity.ok(professorService.update(professor));
     }
 }

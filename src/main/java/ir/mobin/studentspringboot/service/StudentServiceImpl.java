@@ -1,15 +1,20 @@
 package ir.mobin.studentspringboot.service;
 
-import ir.mobin.studentspringboot.entity.Professor;
+import ir.mobin.studentspringboot.dto.student.AddStudentDto;
+import ir.mobin.studentspringboot.dto.student.UpdateStudentDto;
+import ir.mobin.studentspringboot.dto.student.ViewStudentDto;
 import ir.mobin.studentspringboot.entity.Student;
 import ir.mobin.studentspringboot.exception.ConflictException;
 import ir.mobin.studentspringboot.exception.NotFoundException;
+import ir.mobin.studentspringboot.mapper.StudentMapper;
 import ir.mobin.studentspringboot.repository.StudentRepository;
 import ir.mobin.studentspringboot.repository.UserRepository;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -17,10 +22,18 @@ public class StudentServiceImpl extends UserService<Student> implements StudentS
 
     private final StudentRepository studentRepository;
 
-    public StudentServiceImpl(StudentRepository studentRepository, UserRepository<Student> userRepository) {
+    private final StudentMapper studentMapper;
+
+
+    public StudentServiceImpl(StudentRepository studentRepository, UserRepository<Student> userRepository, StudentMapper studentMapper) {
         super(userRepository);
         this.studentRepository = studentRepository;
 
+        this.studentMapper = studentMapper;
+    }
+
+    public UpdateStudentDto toUpdateStudentDto(Student student) {
+        return  studentMapper.toUpdateStudent(student);
     }
 
     private Optional<Student> checkUniqueStdNumber(Long code) {
@@ -46,33 +59,37 @@ public class StudentServiceImpl extends UserService<Student> implements StudentS
 
 
     @Override
-    public Student update(Student student) {
+    public ViewStudentDto update(UpdateStudentDto student) {
 
         final long id = student.getId();
 
 
         checkUniqueNationalCodeForUpdate(student.getNationalCode(), id);
-        checkUniqueStdNumberForUpdate(student.getStdNumber(), id);
-        checkUniqueUsernameForUpdate(student.getUsername(), id);
 
-
-        return studentRepository.save(student);
+        Student studentEntity = studentMapper.toEntity(student);
+        return studentMapper.toViewDto(studentRepository.save(studentEntity));
     }
+
     @Override
-    public Student save(Student student) {
+    public ViewStudentDto save(AddStudentDto student) {
 
         checkUniqueNationalCode(student.getNationalCode());
         checkUniqueStdNumber(student.getStdNumber());
         checkUniqueUsername(student.getUsername());
-
-        return studentRepository.save(student);
+        Student studentEntity = studentMapper.toEntity(student);
+        return studentMapper.toViewDto(studentRepository.save(studentEntity));
     }
 
     @Override
-    public Student findById(Long id) {
-        return studentRepository.findById(id).orElseThrow(() -> new NotFoundException("student is not found"));
+    public Student findByStdNumber(Long stdNumber) {
+        return studentRepository.findByStdNumber(stdNumber)
+                .orElseThrow(()->new NotFoundException("student not found"));
     }
 
+    @Override
+    public ViewStudentDto findById(Long id) {
+        return studentMapper.toViewDto(studentRepository.findById(id).orElseThrow(() -> new NotFoundException("student is not found")));
+    }
 
 
     @Override
@@ -84,7 +101,7 @@ public class StudentServiceImpl extends UserService<Student> implements StudentS
     }
 
     @Override
-    public List<Student> findAll() {
-        return studentRepository.findAll();
+    public List<ViewStudentDto> findAll() {
+        return studentRepository.findAll().stream().map(studentMapper::toViewDto).collect(Collectors.toList());
     }
 }
