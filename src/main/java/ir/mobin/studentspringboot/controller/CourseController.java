@@ -9,6 +9,7 @@ import ir.mobin.studentspringboot.entity.Professor;
 import ir.mobin.studentspringboot.service.CourseService;
 import ir.mobin.studentspringboot.service.ProfessorService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class CourseController {
 
     @PostMapping("/create")
     public ResponseEntity<ViewCourseDto> save(@RequestBody AddCourseDto course) {
-        return ResponseEntity.ok(courseService.save(course));
+        return new ResponseEntity<>(courseService.save(course), HttpStatus.CREATED);
     }
 
     @GetMapping("/find-all")

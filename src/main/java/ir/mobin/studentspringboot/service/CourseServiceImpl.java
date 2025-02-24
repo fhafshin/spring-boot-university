@@ -11,6 +11,9 @@ import ir.mobin.studentspringboot.mapper.CourseMapper;
 import ir.mobin.studentspringboot.repository.CourseRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 
@@ -44,14 +47,14 @@ public class CourseServiceImpl implements CourseService {
     public UpdateCourseDto toUpdateCourseDto(Course course) {
         return courseMapper.toUpdateCourseDto(course);
     }
-
+@Cacheable(value = "course",key = "#id")
     public ViewCourseDto findById(Long id) {
 
 
         return courseMapper.toViewDto(courseRepository.findById(id).orElseThrow(() -> new NotFoundException("course not found")));
 
     }
-
+@Cacheable(value = "course" ,key = "result.id")
     public Course findByCode(int code) {
 
         return courseRepository.findByCode(code).orElseThrow(() -> new NotFoundException("course not found"));
@@ -86,13 +89,14 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.save(course);
 
     }
-
+@Caching(evict = {@CacheEvict(value = "allCourse",allEntries = true),
+@CacheEvict(value = "course",key = "#id")})
     public void delete(Long id) {
 
         findById(id);
         courseRepository.deleteById(id);
     }
-
+@Cacheable(value = "allCourse")
     public List<ViewCourseDto> findAll() {
         return courseRepository.findAll().stream().map(courseMapper::toViewDto).collect(Collectors.toList());
     }
