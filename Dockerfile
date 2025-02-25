@@ -1,4 +1,5 @@
-FROM ubuntu:latest
-LABEL authors="Asus"
+FROM openjdk:23
+EXPOSE 8080
+ADD target/spring-boot-academy.jar spring-boot-academy.jar
 
-ENTRYPOINT ["top", "-b"]
+ENTRYPOINT ["java","-jar","/spring-boot-academy.jar"]
